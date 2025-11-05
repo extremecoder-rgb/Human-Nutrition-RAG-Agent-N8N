@@ -1,0 +1,479 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "12gpCtyp5yIpWeviWQg8c_-x_RkBfIfzL",
+          "mode": "list",
+          "cachedResultName": "RAG -N8N",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/12gpCtyp5yIpWeviWQg8c_-x_RkBfIfzL"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        128,
+        -80
+      ],
+      "id": "2a0246a0-56b2-4b1b-a30e-3e5ba7918f4a",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "HKd0a13e9YQyuvKn",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        352,
+        -80
+      ],
+      "id": "a0fce08e-787a-44a5-b6ab-aaa399fdf699",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "HKd0a13e9YQyuvKn",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        576,
+        -80
+      ],
+      "id": "8f9f7862-f588-432a-8650-00ac23e37bf0",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "VK5YxMnxhzAXEtty",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        480,
+        112
+      ],
+      "id": "8f85d514-e158-4d7f-bd52-eb44c7058364",
+      "name": "Embeddings HuggingFace Inference",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "hx13EtKYzfAaGbGw",
+          "name": "HuggingFaceApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        128
+      ],
+      "id": "16ce1269-4499-4305-9f99-f501074b9503",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        176,
+        352
+      ],
+      "id": "630c558f-fd77-4977-9536-4f1463c956c5",
+      "name": "When chat message received",
+      "webhookId": "1e2f9809-1ddc-46a8-bdc6-92e7c52c0a37"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=#Overview\nYou are a helpful intelligent information extracting assistant that answers any queries that come to you\n\n##Tools\nVector_store - This will ALWAYS be used when answering any questions that the user might have.\n\n##Rules\n- You must ALWAYS pull information from the Vector_store\n- Your answers need to be concise and to the point"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        384,
+        352
+      ],
+      "id": "9cd34c07-7faa-4f3f-92ff-096703719972",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        288,
+        544
+      ],
+      "id": "f6fe51ef-77ee-4ce5-b072-df1d59d77f7d",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Dmqwediwuen0Eu2h",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 6
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        544
+      ],
+      "id": "b391521b-b633-4da8-99d7-81da840218fa",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        832,
+        544
+      ],
+      "id": "78ad22d1-f702-48d8-a225-5cce7d0255d3",
+      "name": "Embeddings HuggingFace Inference1",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "hx13EtKYzfAaGbGw",
+          "name": "HuggingFaceApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Work with data from the Supabase vector database",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "topK": 5,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        736,
+        352
+      ],
+      "id": "69174edb-3e87-4b20-af18-d6651c690af8",
+      "name": "Vector_store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "VK5YxMnxhzAXEtty",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Google Drive Trigger": [
+      {
+        "json": {
+          "parents": [
+            "12gpCtyp5yIpWeviWQg8c_-x_RkBfIfzL"
+          ],
+          "lastModifyingUser": {
+            "displayName": "Subhranil Mondal",
+            "kind": "drive#user",
+            "me": true,
+            "permissionId": "14094641634235798214",
+            "emailAddress": "hsuswiowkskow@gmail.com",
+            "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocKNaQ8Bvxh3AtXDSYppyia9vTyolSH6zj8Nz11e5kJGK_rW7bkhvA=s64"
+          },
+          "owners": [
+            {
+              "displayName": "Subhranil Mondal",
+              "kind": "drive#user",
+              "me": true,
+              "permissionId": "14094641634235798214",
+              "emailAddress": "hsuswiowkskow@gmail.com",
+              "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocKNaQ8Bvxh3AtXDSYppyia9vTyolSH6zj8Nz11e5kJGK_rW7bkhvA=s64"
+            }
+          ],
+          "permissions": [
+            {
+              "kind": "drive#permission",
+              "id": "14094641634235798214",
+              "type": "user",
+              "emailAddress": "hsuswiowkskow@gmail.com",
+              "role": "owner",
+              "displayName": "Subhranil Mondal",
+              "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocKNaQ8Bvxh3AtXDSYppyia9vTyolSH6zj8Nz11e5kJGK_rW7bkhvA=s64",
+              "deleted": false,
+              "pendingOwner": false
+            }
+          ],
+          "spaces": [
+            "drive"
+          ],
+          "capabilities": {
+            "canAcceptOwnership": false,
+            "canAddChildren": false,
+            "canAddMyDriveParent": false,
+            "canChangeCopyRequiresWriterPermission": true,
+            "canChangeItemDownloadRestriction": true,
+            "canChangeSecurityUpdateEnabled": false,
+            "canChangeViewersCanCopyContent": true,
+            "canComment": true,
+            "canCopy": true,
+            "canDelete": true,
+            "canDisableInheritedPermissions": false,
+            "canDownload": true,
+            "canEdit": true,
+            "canEnableInheritedPermissions": true,
+            "canListChildren": false,
+            "canModifyContent": true,
+            "canModifyContentRestriction": true,
+            "canModifyEditorContentRestriction": true,
+            "canModifyOwnerContentRestriction": true,
+            "canModifyLabels": false,
+            "canMoveChildrenWithinDrive": false,
+            "canMoveItemIntoTeamDrive": true,
+            "canMoveItemOutOfDrive": true,
+            "canMoveItemWithinDrive": true,
+            "canReadLabels": false,
+            "canReadRevisions": true,
+            "canRemoveChildren": false,
+            "canRemoveContentRestriction": false,
+            "canRemoveMyDriveParent": true,
+            "canRename": true,
+            "canShare": true,
+            "canTrash": true,
+            "canUntrash": true
+          },
+          "permissionIds": [
+            "14094641634235798214"
+          ],
+          "linkShareMetadata": {
+            "securityUpdateEligible": false,
+            "securityUpdateEnabled": true
+          },
+          "downloadRestrictions": {
+            "itemDownloadRestriction": {
+              "restrictedForReaders": false,
+              "restrictedForWriters": false
+            },
+            "effectiveDownloadRestrictionWithContext": {
+              "restrictedForReaders": false,
+              "restrictedForWriters": false
+            }
+          },
+          "kind": "drive#file",
+          "id": "1760rVzh2eETmCkCkzMHGtXNsSY0tXv0j",
+          "name": "Human-Nutrition-2020-Edition-1598491699.pdf",
+          "mimeType": "application/pdf",
+          "starred": false,
+          "trashed": false,
+          "explicitlyTrashed": false,
+          "version": "3",
+          "webContentLink": "https://drive.google.com/uc?id=1760rVzh2eETmCkCkzMHGtXNsSY0tXv0j&export=download",
+          "webViewLink": "https://drive.google.com/file/d/1760rVzh2eETmCkCkzMHGtXNsSY0tXv0j/view?usp=drivesdk",
+          "iconLink": "https://drive-thirdparty.googleusercontent.com/16/type/application/pdf",
+          "hasThumbnail": true,
+          "thumbnailLink": "https://lh3.googleusercontent.com/drive-storage/AJQWtBPyJ2l6ICEmMeL5ykVONlnyXY1lYtApPAaRxiNd5YTJ801BvJNWMSIxaIR6acRLjPglv05IbXQ1fqrZ6LKS0hGt6vSJ0qsKYL6gkAStJzAmDwU=s220",
+          "thumbnailVersion": "1",
+          "viewedByMe": true,
+          "viewedByMeTime": "2025-11-05T15:41:04.209Z",
+          "createdTime": "2025-11-05T15:41:04.209Z",
+          "modifiedTime": "2025-11-05T15:40:18.000Z",
+          "modifiedByMeTime": "2025-11-05T15:40:18.000Z",
+          "modifiedByMe": true,
+          "shared": false,
+          "ownedByMe": true,
+          "viewersCanCopyContent": true,
+          "copyRequiresWriterPermission": false,
+          "writersCanShare": true,
+          "originalFilename": "Human-Nutrition-2020-Edition-1598491699.pdf",
+          "fullFileExtension": "pdf",
+          "fileExtension": "pdf",
+          "md5Checksum": "0bed51f0d2edc69a7996e6142e4310d5",
+          "sha1Checksum": "2c5bb766d4d3cb3e9dd06cacd62f20cbabae36d9",
+          "sha256Checksum": "b92f616767c3b8b40f104c31e5c3f68e64407eec07e6405de737376d55b40caa",
+          "size": "26891229",
+          "quotaBytesUsed": "26891229",
+          "headRevisionId": "0B-bi0KgTy8uDMTNyYTFZdXZqby9ORUpnSHNHdlE5SDFobG9zPQ",
+          "isAppAuthorized": false,
+          "inheritedPermissionsDisabled": false
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Vector_store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector_store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1056e1d7-f018-4ac5-a23e-f079e6579056",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "effe7f811a776545a70c75e8b8ed9544f23120ef74dd8c33732875891c301be1"
+  },
+  "id": "xQlJN5OOLt3UoTWj",
+  "tags": []
+}
